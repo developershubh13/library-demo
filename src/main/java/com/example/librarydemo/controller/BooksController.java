@@ -19,7 +19,7 @@ public class BooksController {
     @PostMapping("/addBook")
     public String addBook(@RequestBody Books book){
         bookRepository.save(book);
-        return "Book Added Successfully";
+        return "Book Added Successfully!Congratulations";
     }
 
     @GetMapping("/getAllBooks")
