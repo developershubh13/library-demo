@@ -30,7 +30,7 @@ public class StudentsController {
     @PostMapping("/addStudent")
     public String addStudents(@RequestBody Students students){
         studentsRepository.save(students);
-        return "Student Added Successfully";
+        return "Added Successfully";
     }
 
     @GetMapping("/getAllStudents")
