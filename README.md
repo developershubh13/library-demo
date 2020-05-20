@@ -38,15 +38,12 @@
       BASE URL - http://localhost:port/api . port is configured in application.properties file (8090)
 
          Books API
-
-            /event/create - to create new event
-            /event/viewAll - to view all hosted events based on the roles of logged in member
-            /event/view/{id} - to view a particular event
-            /event/viewTrending - to view trending events
-            /event/viewPopular - to view popular events
-            /event/viewUpcoming - to view upcoming events
-            /event/update/{id} - to update an event
-            /event/delete/{id} - to delete an event
+            /books/add - to add a book
+            /books/getAll - to read all books
+            /books/getById - to read book with given Id
+            /books/getByTitle -to read book with given title
+            /books/getByAuthor - to read book with given author
+            /books/deleteById/{id} - to delete a book with given id
            
           Students API
 
