@@ -1,16 +1,20 @@
 package com.example.librarydemo.controller;
 
-
 import com.example.librarydemo.model.Books;
 import com.example.librarydemo.model.Students;
 import com.example.librarydemo.repository.BooksRepository;
 import com.example.librarydemo.repository.StudentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/students")
@@ -22,16 +26,14 @@ public class StudentsController {
     @Autowired
     private BooksRepository booksRepository;
 
-
-    @GetMapping("/")
-    public String message(){
-        return "Students Controller";
-    }
     @PostMapping("/addStudent")
-    public String addStudents(@RequestBody Students students){
+    public String addStudents(@Valid @RequestBody Students students){
         studentsRepository.save(students);
         return "Added Successfully";
     }
+
+
+
 
     @GetMapping("/getAllStudents")
     public List<Students> getAllStudents(){
@@ -62,15 +64,19 @@ public class StudentsController {
     public String updateStudent(@PathVariable int id,@RequestBody Students students){
 
         Optional<Students> student=studentsRepository.findById(id);
-        Students student1=student.get();
 
-        student1.setStudentId(students.getStudentId());
-        student1.setStudentName(students.getStudentName());
-        student1.setStudentClass(students.getStudentClass());
-        student1.setBooks(students.getBooks());
+        if(!student.isPresent()) {
+            throw new ValidationException("ID not Present");
+        }
+            Students student1 = student.get();
 
-        studentsRepository.save(student1);
-        return "Student Updated Successfully";
+            student1.setStudentId(students.getStudentId());
+            student1.setStudentName(students.getStudentName());
+            student1.setStudentClass(students.getStudentClass());
+            student1.setBooks(students.getBooks());
+
+            studentsRepository.save(student1);
+            return "Student Updated Successfully";
     }
 
     @GetMapping("/getBooksWithStudent/{id}")

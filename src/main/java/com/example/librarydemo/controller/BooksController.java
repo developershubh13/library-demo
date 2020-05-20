@@ -6,6 +6,7 @@ import com.example.librarydemo.repository.BooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,8 @@ public class BooksController {
     public void updateBook(@PathVariable int id,@RequestBody Books bookDetails){
         Optional<Books> book=bookRepository.findById(id);  //Integer
 
+        if(!book.isPresent())
+            throw new ValidationException("BookID not present");
         Books books=book.get();
         books.setAuthor(bookDetails.getAuthor());
         books.setNoOfCopies(bookDetails.getNoOfCopies());

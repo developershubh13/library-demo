@@ -2,17 +2,30 @@ package com.example.librarydemo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Document(collection = "Books")
 public class Books {
 
     @Id
-    private int bookId;
+    private Integer bookId;
+
+    @NotBlank
+    @Size(max=100)
     private String title;
+
+    @NotBlank
+    @Size(max=30)
     private String author;
-    private int noOfCopies;
+
+    @NotBlank
+    @Size(max=30)
+    private Integer noOfCopies;
+
     private List<Integer> students;
+
     private List<Integer> teachers;
 
     public Books(){

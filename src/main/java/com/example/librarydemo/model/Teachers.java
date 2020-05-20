@@ -3,6 +3,8 @@ package com.example.librarydemo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Document(collection = "Teachers")
@@ -10,8 +12,15 @@ public class Teachers {
 
     @Id
     private int teacherId;
+
+    @NotBlank
+    @Size(max=30)
     private String teacherName;
+
+    @NotBlank
+    @Size(max=30)
     private String subject;
+
     private List<Integer> books;
 
     public Teachers() {

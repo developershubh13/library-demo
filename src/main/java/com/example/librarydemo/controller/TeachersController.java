@@ -8,7 +8,9 @@ import com.example.librarydemo.repository.TeachersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ValidationException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +70,9 @@ public class TeachersController {
     public String updateTeacherById(@PathVariable int id,@RequestBody Teachers teachers){
 
         Optional<Teachers> t=teachersRepository.findById(id);
+        if (!t.isPresent()){
+            throw new ValidationException("Teacher ID not present");
+        }
         Teachers teachers1=t.get();
         teachers1.setTeacherId(teachers.getTeacherId());
         teachers1.setTeacherName(teachers.getTeacherName());
@@ -83,7 +88,7 @@ public class TeachersController {
     @GetMapping("/getBooksWithTeacher/{id}")
     public List<Books> getBooksWithTeacher(@PathVariable int id){
 
-        List<Books> books=new ArrayList<Books>();
+        List<Books> books=new ArrayList<>();
 
         Optional<Teachers> t=teachersRepository.findById(id);
         Teachers teachers=t.get();
@@ -95,6 +100,7 @@ public class TeachersController {
             Books b1=b.get();
             books.add(b1);
         }
+
         return books;
     }
 

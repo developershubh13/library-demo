@@ -9,6 +9,6 @@ services:
     image: library-demo-image1
     container_name: springboot-library1
     ports:
-     - 80:8080
+     - 9090:9090
     links:
       - mymongodb

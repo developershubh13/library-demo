@@ -4,15 +4,25 @@ package com.example.librarydemo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Document(collection = "Students")
 public class Students {
 
     @Id
-    private int studentId;
+    private Integer studentId;
+
+    @NotBlank
+    @Size(max=30)
     private String studentName;
+
+    @NotBlank
+    @Size(max=30)
     private String studentClass;
+
     private List<Integer> books;
 
     public Students(){
