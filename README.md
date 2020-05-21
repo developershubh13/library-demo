@@ -46,11 +46,20 @@
             /books/deleteById/{id} - to delete a book with given id
            
           Students API
-
-            /member/create - to create a new member
-            /member/view/{id} - to view a member
-            /member/viewAll - to view all members in organization
-            /member/update/{id} - to update a member
+            /students/add - to add a student
+            /students/getAllStudents - to read all the students
+            /students/getStudentById/{id} - to read a student with a given Id(studentID)
+            /studnets/deleteById/{id} - to delete a student with a given id(studentID)
+            /students/update/{id} - to pdate a student with a given id(studentID)
+            
+            /students/getAllBooks - to read all books
+            /student/getBookById/{id} - to read book with given id(bookID)
+            /students/getBookByTitle/{title} -ro read a book with a given title
+            /students/getBookByAuthor/{author} -to get a book with a given author
+            /students/getBooksWithStudent/{studentId} -given a studentID search all books issued by that student
+            /students/issueBookById/{bookID}/{studentID} -issue a book with given bookID by a student with given studentID
+         
+            
             
           Teachers API
             /team/create - create a new team
