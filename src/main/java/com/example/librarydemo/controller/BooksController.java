@@ -3,9 +3,13 @@ package com.example.librarydemo.controller;
 
 import com.example.librarydemo.model.Books;
 import com.example.librarydemo.repository.BooksRepository;
+import com.example.librarydemo.service.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
@@ -15,60 +19,64 @@ import java.util.Optional;
 public class BooksController {
 
     @Autowired
-    private BooksRepository bookRepository;
+    private BooksService bookService;
 
-    @PostMapping("/addBook")
-    public String addBook(@RequestBody Books book){
-        bookRepository.save(book);
-        return "Book Added Successfully!Congratulations";
+
+    //Adding a book
+    @PostMapping("/add")
+    public ResponseEntity<Books> add(@Valid @RequestBody Books book){
+     return new ResponseEntity<Books>(bookService.add(book), HttpStatus.OK);
+
     }
 
-    @GetMapping("/getAllBooks")
-    public List<Books> getAllBooks(){
-        return bookRepository.findAll();
+    //Read all books
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Books>> getAll(){
+        return new ResponseEntity<List<Books>>(bookService.getAll(),HttpStatus.OK);
     }
 
-    @GetMapping("/getBookById/{id}")
-    public Optional<Books> getBookById(@PathVariable int id){
-        return bookRepository.findById(id);
+    //Read a book with a given id
+    @GetMapping("/getById/{id}")
+    public Optional<Books> getById(@PathVariable int id){
+        if(id<0){
+            throw new ValidationException("Book ID cannot be negative");
+        }
+        if(!bookService.getById(id).isPresent())
+            throw new ValidationException("Book with given ID not found");
+
+        return bookService.getById(id);
     }
 
-    @GetMapping("/getBookByTitle/{title}")
-    public List<Books> getBooksByTitle(@PathVariable String title){
-        return bookRepository.getBookByTitle(title);
+    //Read a book by title
+    @GetMapping("/getByTitle/{title}")
+    public ResponseEntity<List<Books>> getByTitle(@PathVariable String title){
+        return new ResponseEntity<>(bookService.getByTitle(title), HttpStatus.OK);
     }
 
-    @GetMapping("/getById/{title}")
-    public List<Books> getById(@PathVariable String title){
-        return bookRepository.getById(title);
+    //Read a book by author
+    @GetMapping("/getByAuthor/{author}")
+    public ResponseEntity<List<Books>> getByAuthor(@PathVariable String author){
+        return new ResponseEntity<>(bookService.getByAuthor(author), HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteBookById/{id}")
-    public void deleteBookById(@PathVariable int id){
-        bookRepository.deleteById(id);
-    }
-
+    //Delete book with a given ID
     @DeleteMapping("/deleteById/{id}")
-    public void deleteId(@PathVariable int id){
-        bookRepository.deleteId(id);
+    public void deleteBookById(@PathVariable int id){
+        if(id<0)
+            throw new ValidationException("Book ID can not be negative");
+        else
+         bookService.deleteById(id);
     }
 
-    @PutMapping("/updateBook/{id}")
-    public void updateBook(@PathVariable int id,@RequestBody Books bookDetails){
-        Optional<Books> book=bookRepository.findById(id);  //Integer
+    //Update a book with a given Id
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Books> update(@PathVariable int id,@Valid @RequestBody Books bookDetails){
 
-        if(!book.isPresent())
-            throw new ValidationException("BookID not present");
-        Books books=book.get();
-        books.setAuthor(bookDetails.getAuthor());
-        books.setNoOfCopies(bookDetails.getNoOfCopies());
-        books.setTitle(bookDetails.getTitle());
-        books.setStudents(bookDetails.getStudents());
-        books.setTeachers(bookDetails.getTeachers());
-
-        bookRepository.save(books);
-
-
+        if(id<0){
+            throw new ValidationException("Book ID can not be negative");
+        }else{
+            return new ResponseEntity<>(bookService.update(id, bookDetails), HttpStatus.OK);
+        }
     }
 }
 

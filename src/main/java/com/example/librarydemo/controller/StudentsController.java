@@ -2,131 +2,129 @@ package com.example.librarydemo.controller;
 
 import com.example.librarydemo.model.Books;
 import com.example.librarydemo.model.Students;
-import com.example.librarydemo.repository.BooksRepository;
-import com.example.librarydemo.repository.StudentsRepository;
+import com.example.librarydemo.service.BooksService;
+import com.example.librarydemo.service.StudentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/students")
 public class StudentsController {
 
     @Autowired
-    private StudentsRepository studentsRepository;
+    private StudentsService studentsService;
 
     @Autowired
-    private BooksRepository booksRepository;
+    private BooksService booksService;
 
-    @PostMapping("/addStudent")
-    public String addStudents(@Valid @RequestBody Students students){
-        studentsRepository.save(students);
-        return "Added Successfully";
+    //Add a Student
+    @PostMapping("/add")
+    public ResponseEntity<Students> add(@Valid @RequestBody Students students){
+       return new ResponseEntity<>(studentsService.add(students), HttpStatus.OK);
     }
 
-
-
-
+    //Read all students
     @GetMapping("/getAllStudents")
-    public List<Students> getAllStudents(){
-        return studentsRepository.findAll();
+    public ResponseEntity<List<Students>> getAllStudents(){
+        return new ResponseEntity<>(studentsService.getAllStudents(),HttpStatus.OK);
     }
 
+    //Read a student with given Id
     @GetMapping("/getStudentById/{id}")
     public Optional<Students> getStudentById(@PathVariable int id){
-        return studentsRepository.findById(id);
+
+        if(id<0){
+            throw new ValidationException("Student ID cannot be negative");
+        }
+        if(!studentsService.getStudentById(id).isPresent())
+            throw new ValidationException("Student with given ID not found");
+
+        return studentsService.getStudentById(id);
     }
 
+     //Read Students with given name
+     @GetMapping("/getByStudentName/{name}")
+     public ResponseEntity<Students> getByStudentName(@PathVariable String name){
+        return new ResponseEntity<>(studentsService.getByStudentName(name),HttpStatus.OK);
+     }
+
+
+
+    //Delete student with a given ID
+    @DeleteMapping("/deleteById/{id}")
+    public void deleteStudentById(@PathVariable int id){
+        if(id<0)
+            throw new ValidationException("Students ID can not be negative");
+        else
+            studentsService.deleteById(id);
+    }
+
+    //Update a Student with given Id
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Students> updateStudent(@PathVariable int id,@Valid @RequestBody Students students){
+
+        if(id<0)
+            throw new ValidationException("Sudnet ID cannot be negative");
+        else
+            return new ResponseEntity<>(studentsService.updateStudent(id,students),HttpStatus.OK);
+    }
+
+    //Get All Books
     @GetMapping("/getAllBooks")
-    public List<Books> getAllBooks(){
-        return booksRepository.findAll();
+    public ResponseEntity<List<Books>> getAllBooks(){
+        return new ResponseEntity<>(booksService.getAll(),HttpStatus.OK);
     }
 
+    //Read Book with given Id
     @GetMapping("/getBookById/{id}")
     public Optional<Books> getBookById(@PathVariable int id){
-        return booksRepository.findById(id);
+        return booksService.getById(id);
     }
 
+    //Read Book with given title
     @GetMapping("/getBookByTitle/{title}")
-    public List<Books> getBookByTitle(@PathVariable String title){
-        return booksRepository.getBookByTitle(title);
+    public ResponseEntity<List<Books>> getBookByTitle(@PathVariable String title){
+         return new ResponseEntity<>(booksService.getByTitle(title),HttpStatus.OK);
     }
 
-    @PutMapping("/updateStudent/{id}")
-    public String updateStudent(@PathVariable int id,@RequestBody Students students){
+    //Read Book with given author
+    @GetMapping("/getBookByAuthor/{author}")
+    public ResponseEntity<List<Books>> getBookByAuthor(@PathVariable String author){
+        return new ResponseEntity<>(booksService.getByAuthor(author),HttpStatus.OK);
+    }
 
-        Optional<Students> student=studentsRepository.findById(id);
+    //Search All Books with student of given studentID
+    @GetMapping("/getBooksWithStudent/{studentId}")
+    public ResponseEntity<List<Books>> getBooksWithStudent(@PathVariable int studentId){
 
-        if(!student.isPresent()) {
-            throw new ValidationException("ID not Present");
+        Optional<Students> stud=studentsService.getStudentById(studentId);
+        if(!stud.isPresent())
+            throw new ValidationException("No Student with given StudentID");
+        else{
+            return new ResponseEntity<>(studentsService.getBooksWithStudent(studentId),HttpStatus.OK);
         }
-            Students student1 = student.get();
-
-            student1.setStudentId(students.getStudentId());
-            student1.setStudentName(students.getStudentName());
-            student1.setStudentClass(students.getStudentClass());
-            student1.setBooks(students.getBooks());
-
-            studentsRepository.save(student1);
-            return "Student Updated Successfully";
     }
 
-    @GetMapping("/getBooksWithStudent/{id}")
-    public List<Books> getBooksWithStudent(@PathVariable int id){
-
-        List<Books> books = new ArrayList<Books>();
-
-        Optional<Students> stud = studentsRepository.findById(id);
-        Students students = stud.get();
-        List<Integer> arr = students.getBooks();
-
-        int i = 0;
-        for (i = 0; i < arr.size(); i++) {
-            Optional<Books> b = (booksRepository.findById(arr.get(i)));
-            Books b1 = b.get();
-
-            books.add(b1);
-        }
-
-        return books;
-
-    }
-
+    //Issue Book with given bookID for student with given studentID
     @GetMapping("/issueBookById/{bookId}/{studentId}")
-    public String issueBookById(@PathVariable int bookId,@PathVariable int studentId)
-    {
-        Optional<Books> b=booksRepository.findById(bookId);
-        Books books=b.get();
-        int noOfCopies=books.getNoOfCopies();
-
-        Optional<Students> s=studentsRepository.findById(studentId);
-        Students students=s.get();
-        List<Integer> arr=students.getBooks();
-        int size=arr.size();
-
-        if(arr.contains(bookId)){
-            return "Book Already Issued";
-        }else if(noOfCopies>0 && size<3){
-            books.setNoOfCopies(books.getNoOfCopies()-1);
-            arr.add(bookId);
-            students.setBooks(arr);
-            booksRepository.save(books);
-            studentsRepository.save(students);
-            return "Book Issued Successfully";
-        }else if(size>=3){
-            return "Already 3 Book Issued";
-        }else if(noOfCopies<=0){
-            return "No Copies Available";
-        }else
-            return "Issue Unsuccessfull";
+    public ResponseEntity<String> issueBookById(@PathVariable int bookId,@PathVariable int studentId) {
+        Optional<Books> b = booksService.getById(bookId);
+        if (!b.isPresent())
+            throw new ValidationException("No Book With given BookID");
+        else {
+            if (bookId < 0 || studentId < 0)
+                throw new ValidationException("Either bookID or studentID is negative");
+            else {
+                return new ResponseEntity<>(studentsService.issueBookById(bookId, studentId), HttpStatus.OK);
+            }
+        }
     }
 
 }

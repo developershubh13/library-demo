@@ -12,10 +12,8 @@ import java.util.List;
 @Repository
 public interface BooksRepository extends MongoRepository<Books,Integer> {
 
-    public List<Books> getBookByTitle(String title);
-
-    @Query("{'title' : ?0}")
-    public List<Books> getById(String title);
+    public List<Books> getByTitle(String title);
+    public List<Books> getByAuthor(String title);
 
     @DeleteQuery("{'bookId' : ?0}")
     public void deleteId(int bookId);

@@ -20,8 +20,6 @@ public class Books {
     @Size(max=30)
     private String author;
 
-    @NotBlank
-    @Size(max=30)
     private Integer noOfCopies;
 
     private List<Integer> students;
