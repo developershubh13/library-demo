@@ -2,7 +2,6 @@ package com.example.librarydemo.controller;
 
 
 import com.example.librarydemo.model.Books;
-import com.example.librarydemo.repository.BooksRepository;
 import com.example.librarydemo.service.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -2,16 +2,14 @@ package com.example.librarydemo.service;
 
 import com.example.librarydemo.model.Books;
 import com.example.librarydemo.model.Students;
-import com.example.librarydemo.model.Teachers;
 import com.example.librarydemo.repository.BooksRepository;
 import com.example.librarydemo.repository.StudentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class StudentsService {
@@ -21,6 +19,9 @@ public class StudentsService {
 
     @Autowired
     private BooksRepository booksRepository;
+
+    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd/MM/yyyy");
+
 
     public Students add(Students students){
         return studentsRepository.save(students);
@@ -59,15 +60,17 @@ public class StudentsService {
 
         Optional<Students> stud = studentsRepository.findById(id);
         Students students = stud.get();
-        List<Integer> arr = students.getBooks();
+        Map<Integer,String> arr = students.getBooks();
 
         if(arr.size()==0){
 
             throw new ValidationException("No Books Issued");
         }else {
 
-            for (int i = 0; i < arr.size(); i++) {
-                Optional<Books> b = (booksRepository.findById(arr.get(i)));
+            for (Map.Entry<Integer,String> entry : arr.entrySet()){
+                Integer key=entry.getKey();
+
+                Optional<Books> b = (booksRepository.findById(key));
                 if (!b.isPresent())
                     throw new ValidationException("Book doesn't exist");
                 Books b1 = b.get();
@@ -89,14 +92,17 @@ public class StudentsService {
         else {
 
             Students students = s.get();
-            List<Integer> arr = students.getBooks();
+            Map<Integer,String> arr = students.getBooks();
             int size = arr.size();
 
-            if (arr.contains(bookId)) {
+            if (arr.containsKey(bookId)) {
                 return "Book Already Issued";
             } else if (noOfCopies > 0 && (size < 3 && size>=0)) {
                 books.setNoOfCopies(books.getNoOfCopies() - 1);
-                arr.add(bookId);
+
+                Date date=new Date();
+                String stringDate=simpleDateFormat.format(date);
+                arr.put(bookId,stringDate);
                 students.setBooks(arr);
                 booksRepository.save(books);
                 studentsRepository.save(students);
@@ -112,6 +118,48 @@ public class StudentsService {
     }
 
 
+    public Map<Integer,String> calculateFine(int studentId){
+
+        Map<Integer,String> books= new HashMap<>();
+
+        Optional<Students> students=studentsRepository.findById(studentId);
+        Students student =students.get();
+        books=student.getBooks();
+
+        Map<Integer,String> map=new HashMap<>();
+            if(books.isEmpty())
+                throw new ValidationException("Fine=0,No Book Issued");
+            else{
+
+            for (Map.Entry<Integer,String> entry : books.entrySet()){
+                int key=entry.getKey();
+                String issueDate=entry.getValue();
+
+                int fineAmount=0;
+                int days=calculateDays(issueDate);
+                if(days>=30)
+                    fineAmount=(days-30)*2;
+                String message="FineAmount for Book" + key + "=" +fineAmount;
+                map.put(key,message);
+            }
+            }
+
+        return map;
+    }
+
+    public Integer calculateDays(String issueDate){
+
+        int days=-1;
+
+        try{
+          Date start=simpleDateFormat.parse(issueDate);
+          Date end=new Date();
+          days = Math.round(end.getTime() - start.getTime()) /  86400000;
+        }catch(Exception e){
+            throw new ValidationException("Exception in parsing");
+        }
+         return days;
+    }
 
 }
 

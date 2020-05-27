@@ -127,4 +127,15 @@ public class StudentsController {
         }
     }
 
+    @GetMapping("calculateFine/{studentId}")
+    public ResponseEntity<Map<Integer,String>> calculateFine(@PathVariable int studentId){
+        Optional<Students> stud=studentsService.getStudentById(studentId);
+        if(!stud.isPresent())
+            throw new ValidationException("No Student with given StudentID");
+        else{
+            return new ResponseEntity<>(studentsService.calculateFine(studentId),HttpStatus.OK);
+        }
+
+    }
+
 }

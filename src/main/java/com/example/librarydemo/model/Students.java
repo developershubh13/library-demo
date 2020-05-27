@@ -5,9 +5,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "Students")
 public class Students {
@@ -23,13 +23,13 @@ public class Students {
     @Size(max=30)
     private String studentClass;
 
-    private List<Integer> books;
+    private Map<Integer,String> books;
 
     public Students(){
 
     }
 
-    public Students(int studentId, String studentName, String studentClass, List<Integer> books) {
+    public Students(int studentId, String studentName, String studentClass,Map<Integer,String> books) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.studentClass = studentClass;
@@ -60,11 +60,11 @@ public class Students {
         this.studentClass = studentClass;
     }
 
-    public List<Integer> getBooks() {
+    public Map<Integer,String> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Integer> books) {
+    public void setBooks(Map<Integer,String> books) {
         this.books = books;
     }
 }
