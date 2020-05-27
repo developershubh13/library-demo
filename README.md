@@ -33,6 +33,19 @@
            books: List[Integers]------List containng Books Id        
          }    
      
+# Requirements
+      1. Books Api can add,read(by bookName,bookAuthor,bookId),update,delete a book.
+      2. Students Api can add a student,read students,update student,delete student,read books,can view all books issued by a     
+         student,can issue a book.
+                 -Issue is Unsuccessful if already issued books by Students is greater than 3  or if  of Copies of book is not >0.
+                 -Students can only issue 1 copy of a book at a time else message is displayed.
+      3. Teachers Api can add, update, delete and read teachers, read books, can view all books issued by a particular teacher,can issue          a book.
+                 -Issue is unsuccessful if already issued books by Teachers is greater than 5() or if no of Copies of book is not >0.
+                 -Teachers can only issue 1 copy of a book at a time else message is displayed.
+                 
+                     
+                     
+                     
      
 # API Endpoints
       BASE URL - http://localhost:port/api . port is configured in application.properties file (8090)
@@ -50,22 +63,31 @@
             /students/getAllStudents - to read all the students
             /students/getStudentById/{id} - to read a student with a given Id(studentID)
             /studnets/deleteById/{id} - to delete a student with a given id(studentID)
-            /students/update/{id} - to pdate a student with a given id(studentID)
+            /students/update/{id} - to update a student with a given id(studentID)
             
             /students/getAllBooks - to read all books
             /student/getBookById/{id} - to read book with given id(bookID)
             /students/getBookByTitle/{title} -ro read a book with a given title
             /students/getBookByAuthor/{author} -to get a book with a given author
             /students/getBooksWithStudent/{studentId} -given a studentID search all books issued by that student
-            /students/issueBookById/{bookID}/{studentID} -issue a book with given bookID by a student with given studentID
+            /students/issueBookById/{bookID}/{studentID} -issue a book with given bookID for a student with given studentID
          
             
             
           Teachers API
-            /team/create - create a new team
-            /team/view/{id} - to view a team
-            /team/viewAll - to view all teams
-            /team/update/{id} - to update a team
+            /teachers/add - to add a teacher
+            /teachers/getAllTeachers - to read all the teachers
+            /teachers/getTeacherById/{id} - to read a teacher with a given Id(teacherID)
+            /teachers/getByTeacherName/{name} - to read teacher with a given name
+            /teachers/getTeacherBySubject/{subject} - to read all teachers who belong to given subject 
+            /teachers/deleteById/{id} - to delete a teacher with a given id(teacherID)
+            /teachers/update/{id} - to update a teacher with a given id(teacherID)
+            /teachers/getAllBooks - to read all books
+            /teachers/getBookById/{id} - to read book with given id(bookID)
+            /teachers/getBookByTitle/{title} -ro read a book with a given title
+            /teachers/getBookByAuthor/{author} -to get a book with a given author
+            /teachers/getBooksWithTeacher/{teacherID} -given a teacherID search all books issued by that teacher
+            /teachers/issueBookById/{bookID}/{teacherID} -issue a book with given bookID for a teacher with given teacherID
 
 
 # Push to build with Jenkins
