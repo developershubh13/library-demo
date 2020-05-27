@@ -22,7 +22,7 @@
            studentId: Integer
            studentName: String
            studentClass: String
-           books: List[Integers]------List containng Books Id        
+           books: HAshMap[Integers,Strings]------HashMap containng BookId as key,and stringd denoting DateOfIssue as value       
          }  
          
        
@@ -37,6 +37,7 @@
       1. Books Api can add,read(by bookName,bookAuthor,bookId),update,delete a book.
       2. Students Api can add a student,read students,update student,delete student,read books,can view all books issued by a     
          student,can issue a book.
+                 -If total no of days of book issue is greater than 30,fine is calculated at the rate of Rs.2 per day.
                  -Issue is Unsuccessful if already issued books by Students is greater than 3  or if  of Copies of book is not >0.
                  -Students can only issue 1 copy of a book at a time else message is displayed.
       3. Teachers Api can add, update, delete and read teachers, read books, can view all books issued by a particular teacher,can issue          a book.
@@ -71,7 +72,7 @@
             /students/getBookByAuthor/{author} -to get a book with a given author
             /students/getBooksWithStudent/{studentId} -given a studentID search all books issued by that student
             /students/issueBookById/{bookID}/{studentID} -issue a book with given bookID for a student with given studentID
-         
+            /students/calculateFine/{studentID} -calculates fine per book issued by student
             
             
           Teachers API
@@ -91,9 +92,9 @@
 
 
 # Push to build with Jenkins
-      I have used Jenkins pipeline for automated builds. Whenever some new code is pushed onto the master branch Jenkins will pull the  
+      Jenkins pipeline is used for automated builds. Whenever some new code is pushed onto the master branch Jenkins will pull the  
       commit and starts the build process. Maven is the choice of build tool.
       
 # Docker Images and Docker-Compose
-      I have containerized libray-demo rest api and for database i am using mongodb image. Then i have used a Docker-Compose file to run  
+      Containerized libray-demo rest api and for database mongodb image is used . Then a Docker-Compose file to run  
       library-demo(spring boot application) linked with mongodb container.
