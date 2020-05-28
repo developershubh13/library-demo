@@ -22,7 +22,7 @@
            studentId: Integer
            studentName: String
            studentClass: String
-           books: HAshMap[Integers,Strings]------HashMap containng BookId as key,and stringd denoting DateOfIssue as value       
+           books: HashMap[Integers,Strings]------HashMap containng BookId as key,and stringd denoting DateOfIssue as value       
          }  
          
        
@@ -49,7 +49,7 @@
                      
      
 # API Endpoints
-      BASE URL - http://localhost:port/api . port is configured in application.properties file (8090)
+      BASE URL - http://localhost:port/api
 
          Books API
             /books/add - to add a book
