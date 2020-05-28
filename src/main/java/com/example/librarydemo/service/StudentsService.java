@@ -120,25 +120,29 @@ public class StudentsService {
 
     public Map<Integer,String> calculateFine(int studentId){
 
-        Map<Integer,String> books= new HashMap<>();
+        Map<Integer,String> books;
 
         Optional<Students> students=studentsRepository.findById(studentId);
         Students student =students.get();
         books=student.getBooks();
+
 
         Map<Integer,String> map=new HashMap<>();
             if(books.isEmpty())
                 throw new ValidationException("Fine=0,No Book Issued");
             else{
 
+
             for (Map.Entry<Integer,String> entry : books.entrySet()){
+
+                long fineAmount=0;
+
                 int key=entry.getKey();
                 String issueDate=entry.getValue();
 
-                int fineAmount=0;
-                int days=calculateDays(issueDate);
-                if(days>=30)
-                    fineAmount=(days-30)*2;
+                long days=calculateDays(issueDate);
+
+                fineAmount=(days)*2;
                 String message="FineAmount for Book" + key + "=" +fineAmount;
                 map.put(key,message);
             }
@@ -147,14 +151,14 @@ public class StudentsService {
         return map;
     }
 
-    public Integer calculateDays(String issueDate){
+    public long calculateDays(String issueDate){
 
-        int days=-1;
+        long days=-1;
 
         try{
           Date start=simpleDateFormat.parse(issueDate);
           Date end=new Date();
-          days = Math.round(end.getTime() - start.getTime()) /  86400000;
+          days = Math.round((end.getTime() - start.getTime())/  86400000);
         }catch(Exception e){
             throw new ValidationException("Exception in parsing");
         }
